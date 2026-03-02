@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Habit AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body class="dark-theme">
+    <div id="auth-container" class="auth-page">
+        <div class="auth-wrapper">
+            <div class="auth-side-brand">
+                <div class="brand-content">
+                    <h1 class="logo">Smart <span>Habit AI</span></h1>
+                    <p class="brand-tagline">Optimize your routine, master your habits, and level up your life with AI-driven insights.</p>
+                    <div class="brand-features">
+                        <div class="feature-item"><i class="fas fa-brain"></i> AI Logic Engine</div>
+                        <div class="feature-item"><i class="fas fa-chart-pie"></i> Visual Breakdown</div>
+                        <div class="feature-item"><i class="fas fa-bolt"></i> Real-time Optimization</div>
+                    </div>
+                </div>
+            </div>
+            <div class="auth-side-form">
+                <div class="auth-card">
+                    <div id="login-form" class="auth-form-content">
+                        <h2>Welcome Back</h2>
+                        <p class="form-sub">Enter your details to access your dashboard</p>
+                        <div class="input-field">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="username" placeholder="Username">
+                        </div>
+                        <div class="input-field">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" placeholder="Password">
+                        </div>
+                        <button onclick="login()" class="primary-btn auth-btn">Login to Dashboard</button>
+                        <p class="auth-switch">Don't have an account? <a href="#" onclick="toggleAuth()">Create Account</a></p>
+                    </div>
+                    <div id="register-form" style="display: none;" class="auth-form-content">
+                        <h2>Join the Routine</h2>
+                        <p class="form-sub">Start your journey towards a smarter routine</p>
+                        <div class="input-field">
+                            <i class="fas fa-user-plus"></i>
+                            <input type="text" id="reg-username" placeholder="Create Username">
+                        </div>
+                        <div class="input-field">
+                            <i class="fas fa-key"></i>
+                            <input type="password" id="reg-password" placeholder="Create Password">
+                        </div>
+                        <button onclick="register()" class="primary-btn auth-btn">Register Now</button>
+                        <p class="auth-switch">Already have an account? <a href="#" onclick="toggleAuth()">Sign In</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-container" class="app-layout" style="display: none;">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Smart Habit AI</h3>
+                <p>Routine Optimization</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" onclick="showView('dashboard')"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="#" class="nav-item" onclick="showView('log')"><i class="fas fa-edit"></i> Daily Log</a>
+                <a href="#" class="nav-item" onclick="showView('breakdown')"><i class="fas fa-chart-line"></i> Breakdown</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i> <span id="theme-text">Dark Mode</span>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">AL</div>
+                    <div class="user-info">
+                        <span id="display-username">Alex</span>
+                        <a href="#" onclick="logout()">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view">
+                <header class="view-header">
+                    <div class="header-left">
+                        <h1 id="welcome-msg">Welcome</h1>
+                        <p>Here's your routine analysis for today.</p>
+                    </div>
+                    <div id="gentle-mode-badge" class="mode-badge" style="display: none;">
+                        <i class="fas fa-cloud-moon"></i> Gentle Mode Active
+                    </div>
+                </header>
+
+                <div class="dashboard-grid">
+                    <div class="card main-analysis">
+                        <div class="analysis-header">
+                            <span class="label">ANALYSIS</span>
+                            <span class="badge" id="risk-badge">Stable Streak</span>
+                        </div>
+                        <div class="analysis-body">
+                            <div class="stat">
+                                <h1 id="p-slip-prob">--%</h1>
+                                <p>Slip Chance</p>
+                            </div>
+                            <p class="consistency-text" id="consistency-msg">Excellent consistency! Keep pushing.</p>
+                        </div>
+                        <div class="motivation-gauge">
+                            <div class="circular-progress">
+                                <span id="motivation-score">0</span>
+                            </div>
+                            <span class="label">MOTIVATION SCORE</span>
+                        </div>
+                    </div>
+
+                    <div id="daily-adj-card" class="card daily-adjustment">
+                        <div>
+                            <div class="card-icon"><i class="fas fa-bolt"></i></div>
+                            <h3>Daily Adjustment</h3>
+                            <p id="difficulty-adjustment">Maintain current challenge level.</p>
+                        </div>
+                        <div class="target-load">
+                            <span class="label">Target Load</span>
+                            <span class="val">100%</span>
+                        </div>
+                    </div>
+
+                    <div id="rest-recover-card" class="card rest-recover" style="display: none;">
+                        <div class="card-icon"><i class="fas fa-sun"></i></div>
+                        <h3>Rest & Recover</h3>
+                        <p>Today seems challenging. Focus on small wins and self-compassion. No pressure.</p>
+                    </div>
+
+                    <div class="card recommendations">
+                        <div class="card-header">
+                            <i class="fas fa-chart-area"></i>
+                            <div>
+                                <span class="label">MICRO-ACTION</span>
+                                <h3 id="focus-area-title">Primary Focus</h3>
+                            </div>
+                        </div>
+                        <div id="rec-list" class="rec-list">
+                            <!-- Recommendations will be injected here -->
+                        </div>
+                    </div>
+
+                    <div class="card burnout-risk">
+                        <div class="card-header">
+                            <h3>Burnout Risk</h3>
+                            <i class="fas fa-battery-half"></i>
+                        </div>
+                        <div class="burnout-body">
+                            <h1 id="burnout-risk-val">0%</h1>
+                            <span class="label">CAPACITY USED</span>
+                        </div>
+                        <div class="mini-progress"><div id="burnout-bar" class="fill"></div></div>
+                    </div>
+
+                    <div class="card emotional-state">
+                        <h3>Emotional State</h3>
+                        <div id="mood-icon" class="state-icon">✨</div>
+                        <p id="mood-status">Balanced & Ready.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Log View -->
+            <div id="log-view" class="view" style="display: none;">
+                <header class="view-header">
+                    <h1>Daily Log</h1>
+                    <p>Track your habits to generate AI insights.</p>
+                </header>
+                <div class="card log-card">
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span><i class="fas fa-moon"></i> Sleep Duration</span>
+                            <span class="val" id="sleep-val">7 hrs</span>
+                        </div>
+                        <input type="range" id="sleep" min="0" max="12" step="0.5" value="7" oninput="updateSliderVal('sleep', this.value + ' hrs')">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span><i class="fas fa-book"></i> Study Hours</span>
+                            <span class="val" id="study-val">4 hrs</span>
+                        </div>
+                        <input type="range" id="study" min="0" max="12" step="0.5" value="4" oninput="updateSliderVal('study', this.value + ' hrs')">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span><i class="fas fa-dumbbell"></i> Workout</span>
+                            <span class="val" id="workout-val">30 min</span>
+                        </div>
+                        <input type="range" id="workout" min="0" max="120" step="5" value="30" oninput="updateSliderVal('workout', this.value + ' min')">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span><i class="fas fa-pen-nib"></i> Journalling</span>
+                            <span class="val" id="journal-val">10 min</span>
+                        </div>
+                        <input type="range" id="journal" min="0" max="60" step="5" value="10" oninput="updateSliderVal('journal', this.value + ' min')">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span><i class="fas fa-book-open"></i> Reading</span>
+                            <span class="val" id="reading-val">15 min</span>
+                        </div>
+                        <input type="range" id="reading" min="0" max="60" step="5" value="15" oninput="updateSliderVal('reading', this.value + ' min')">
+                    </div>
+                    
+                    <div class="mood-selector">
+                        <p><i class="fas fa-smile"></i> Mood</p>
+                        <div class="mood-options">
+                            <div class="mood-opt" onclick="selectMood(1)">😢</div>
+                            <div class="mood-opt" onclick="selectMood(2)">😕</div>
+                            <div class="mood-opt active" onclick="selectMood(3)">😐</div>
+                            <div class="mood-opt" onclick="selectMood(4)">😊</div>
+                            <div class="mood-opt" onclick="selectMood(5)">🤩</div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="submitLog()" class="primary-btn log-submit-btn">Analyze My Routine</button>
+                </div>
+            </div>
+
+            <!-- Breakdown View -->
+            <div id="breakdown-view" class="view" style="display: none;">
+                <header class="view-header">
+                    <h1>Habit Breakdown</h1>
+                    <p>Detailed analysis of your routine balance.</p>
+                </header>
+                <div class="card breakdown-card">
+                    <div class="chart-container">
+                        <div class="chart-row"><span>Sleep</span><div class="bar-bg"><div id="bar-sleep" class="bar"></div></div></div>
+                        <div class="chart-row"><span>Study</span><div class="bar-bg"><div id="bar-study" class="bar"></div></div></div>
+                        <div class="chart-row"><span>Workout</span><div class="bar-bg"><div id="bar-workout" class="bar"></div></div></div>
+                        <div class="chart-row"><span>Journal</span><div class="bar-bg"><div id="bar-journal" class="bar"></div></div></div>
+                        <div class="chart-row"><span>Read</span><div class="bar-bg"><div id="bar-reading" class="bar"></div></div></div>
+                        <div class="chart-row"><span>Mood</span><div class="bar-bg"><div id="bar-mood" class="bar"></div></div></div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Timer Overlay -->
+    <div id="timer-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="timer-habit-name">Study Sprint</h2>
+            <div id="countdown-display">20:00</div>
+            <div class="timer-controls">
+                        <button id="timer-start-btn" onclick="runTimer()" class="primary-btn" style="width: auto; padding: 10px 30px; margin-right: 10px;">Start</button>
+                        <button onclick="stopTimer()" class="stop-btn">Stop</button>
+                    </div>        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

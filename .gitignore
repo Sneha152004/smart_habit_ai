@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Database
+backend/habit_tracker.db
+
+# Models (Keep them if you want others to use them immediately, 
+# or ignore if you want them to train their own)
+# model/*.pkl
+
+# OS
+.DS_Store
+Thumbs.db
