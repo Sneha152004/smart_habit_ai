@@ -6,3 +6,4 @@ scikit-learn
 joblib
 numpy
 python-dotenv
+gunicorn

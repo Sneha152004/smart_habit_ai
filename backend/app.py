@@ -25,6 +25,36 @@ app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
 init_db()
 
+def validate_habit_data(data):
+    """Task 1: Backend Input Validation"""
+    try:
+        # Check required fields and numeric types
+        rules = {
+            'sleep_hours': (0, 24),
+            'study_hours': (0, 24),
+            'workout_minutes': (0, 180),
+            'journal_minutes': (0, 120),
+            'reading_minutes': (0, 180)
+        }
+        
+        for field, (min_val, max_val) in rules.items():
+            if field not in data:
+                return False
+            val = float(data[field])
+            if not (min_val <= val <= max_val):
+                return False
+                
+        # Mood validation: 1 to 5 (integer only)
+        if 'mood' not in data:
+            return False
+        mood = data['mood']
+        if not isinstance(mood, int) or not (1 <= mood <= 5):
+            return False
+            
+        return True
+    except (ValueError, TypeError):
+        return False
+
 @app.route('/')
 def index():
     return send_from_directory(FRONTEND_DIR, 'index.html')
@@ -38,6 +68,11 @@ def static_proxy(path):
 def log_daily_data():
     current_user_id = get_jwt_identity()
     data = request.get_json()
+    
+    # Task 1: Validation
+    if not validate_habit_data(data):
+        return jsonify({"error": "Invalid input value"}), 400
+
     try:
         insights = engine.get_insights(data)
         conn = get_db_connection()
@@ -67,6 +102,7 @@ def log_daily_data():
         traceback.print_exc()
         return jsonify({"msg": "Failed to process data", "error": str(e)}), 500
 
+@app.route('/history', methods=['GET']) # Task 3: New Route Only
 @app.route('/api/history', methods=['GET'])
 @jwt_required()
 def get_history():

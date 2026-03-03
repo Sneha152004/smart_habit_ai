@@ -127,8 +127,20 @@ class SmartHabitEngine:
         # For backward compatibility and breakdown pinpointing
         primary_weakest = min(norms, key=norms.get)
 
+        # Task 2: Slip Percentage Category Messaging
+        slip_percentage = round(float(p_slip_prob) * 100)
+        category = "On Track"
+        if 31 <= slip_percentage <= 60:
+            category = "Moderate Risk"
+        elif 61 <= slip_percentage <= 80:
+            category = "High Risk"
+        elif 81 <= slip_percentage <= 100:
+            category = "Very High Risk"
+
         return {
             "p_slip_prob": round(float(p_slip_prob), 2),
+            "slip_percentage": slip_percentage,
+            "category": category,
             "p_slip_class": int(p_slip_class),
             "motivation_score": round(motivation_score, 1),
             "difficulty_adjustment": difficulty,

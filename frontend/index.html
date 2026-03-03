@@ -67,6 +67,7 @@
             <nav class="sidebar-nav">
                 <a href="#" class="nav-item active" onclick="showView('dashboard')"><i class="fas fa-th-large"></i> Dashboard</a>
                 <a href="#" class="nav-item" onclick="showView('log')"><i class="fas fa-edit"></i> Daily Log</a>
+                <a href="#" class="nav-item" onclick="showView('history-list')"><i class="fas fa-history"></i> History</a>
                 <a href="#" class="nav-item" onclick="showView('breakdown')"><i class="fas fa-chart-line"></i> Breakdown</a>
             </nav>
             <div class="sidebar-footer">
@@ -74,10 +75,9 @@
                     <i class="fas fa-moon"></i> <span id="theme-text">Dark Mode</span>
                 </div>
                 <div class="user-profile">
-                    <div class="avatar">AL</div>
                     <div class="user-info">
-                        <span id="display-username">Alex</span>
-                        <a href="#" onclick="logout()">Logout</a>
+                        <span id="display-username" style="font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 10px;">Alex</span>
+                        <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
                     </div>
                 </div>
             </div>
@@ -118,10 +118,18 @@
                     </div>
 
                     <div id="daily-adj-card" class="card daily-adjustment">
+                        <div class="card-decorations">
+                            <i class="fas fa-dumbbell"></i>
+                            <i class="fas fa-book-open"></i>
+                            <i class="fas fa-clock"></i>
+                        </div>
                         <div>
                             <div class="card-icon"><i class="fas fa-bolt"></i></div>
-                            <h3>Daily Adjustment</h3>
-                            <p id="difficulty-adjustment">Maintain current challenge level.</p>
+                            <h3 style="font-size: 1.2rem; letter-spacing: 1px;">Daily Adjustment</h3>
+                            <p id="difficulty-adjustment" style="font-size: 1.4rem; margin-top: 15px;">⚡ Maintain current level.</p>
+                            <div class="optimization-tag">
+                                <i class="fas fa-check-circle"></i> AI Optimized Routine
+                            </div>
                         </div>
                         <div class="target-load">
                             <span class="label">Target Load</span>
@@ -164,6 +172,17 @@
                         <h3>Emotional State</h3>
                         <div id="mood-icon" class="state-icon">✨</div>
                         <p id="mood-status">Balanced & Ready.</p>
+                    </div>
+
+                    <div id="ai-momentum-card" class="card ai-momentum-display">
+                        <div class="momentum-header">
+                            <i class="fas fa-fire"></i>
+                            <span>AI MOMENTUM ENGINE</span>
+                        </div>
+                        <div class="momentum-content">
+                            <p id="dynamic-motivation">Your habits are the architecture of your future.</p>
+                        </div>
+                        <div class="momentum-bg-anim"></div>
                     </div>
                 </div>
             </div>
@@ -223,6 +242,33 @@
                     </div>
                     
                     <button onclick="submitLog()" class="primary-btn log-submit-btn">Analyze My Routine</button>
+                </div>
+            </div>
+
+            <!-- History View -->
+            <div id="history-list-view" class="view" style="display: none;">
+                <header class="view-header">
+                    <h1>Habit History</h1>
+                    <p>Review your past performance and consistency trends.</p>
+                </header>
+                <div class="card history-card">
+                    <div class="history-table-wrapper">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Slip %</th>
+                                    <th>Motivation</th>
+                                    <th>Mood</th>
+                                    <th>Weakest Habit</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body">
+                                <!-- History rows injected here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
