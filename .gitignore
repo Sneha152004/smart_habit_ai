@@ -18,3 +18,7 @@ backend/habit_tracker.db
 # OS
 .DS_Store
 Thumbs.db
+
+# Mistakes (Local only)
+mistakes/
+
