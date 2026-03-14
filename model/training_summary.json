@@ -1,0 +1,187 @@
+{
+    "dataset_path": "dataset.csv",
+    "feature_columns": [
+        "sleep_hours",
+        "study_hours",
+        "workout_minutes",
+        "journalling_minutes",
+        "reading_minutes",
+        "mood",
+        "day_of_week",
+        "is_weekend"
+    ],
+    "target_column": "p_slip",
+    "best_model_name": "ann_mlp",
+    "best_model_test_f1": 0.902,
+    "confusion_matrix_folder": "model\\confusion_matrices",
+    "results": {
+        "logistic_regression": {
+            "cv_accuracy_mean": 0.9653,
+            "cv_precision_mean": 0.8928,
+            "cv_recall_mean": 0.981,
+            "cv_f1_mean": 0.9336,
+            "cv_roc_auc_mean": 0.9954,
+            "test_accuracy": 0.9259,
+            "test_precision": 0.7812,
+            "test_recall": 0.9615,
+            "test_f1": 0.8621,
+            "test_roc_auc": 0.9892,
+            "confusion_matrix": [
+                [
+                    75,
+                    7
+                ],
+                [
+                    1,
+                    25
+                ]
+            ],
+            "confusion_matrix_csv": "model\\confusion_matrices\\logistic_regression_confusion_matrix.csv",
+            "confusion_matrix_png": "model\\confusion_matrices\\logistic_regression_confusion_matrix.png"
+        },
+        "random_forest": {
+            "cv_accuracy_mean": 0.9491,
+            "cv_precision_mean": 0.9182,
+            "cv_recall_mean": 0.8766,
+            "cv_f1_mean": 0.8941,
+            "cv_roc_auc_mean": 0.9884,
+            "test_accuracy": 0.8704,
+            "test_precision": 0.75,
+            "test_recall": 0.6923,
+            "test_f1": 0.72,
+            "test_roc_auc": 0.9554,
+            "confusion_matrix": [
+                [
+                    76,
+                    6
+                ],
+                [
+                    8,
+                    18
+                ]
+            ],
+            "confusion_matrix_csv": "model\\confusion_matrices\\random_forest_confusion_matrix.csv",
+            "confusion_matrix_png": "model\\confusion_matrices\\random_forest_confusion_matrix.png"
+        },
+        "svm_rbf": {
+            "cv_accuracy_mean": 0.9445,
+            "cv_precision_mean": 0.845,
+            "cv_recall_mean": 0.9524,
+            "cv_f1_mean": 0.8943,
+            "cv_roc_auc_mean": 0.9923,
+            "test_accuracy": 0.9074,
+            "test_precision": 0.7857,
+            "test_recall": 0.8462,
+            "test_f1": 0.8148,
+            "test_roc_auc": 0.9845,
+            "confusion_matrix": [
+                [
+                    76,
+                    6
+                ],
+                [
+                    4,
+                    22
+                ]
+            ],
+            "confusion_matrix_csv": "model\\confusion_matrices\\svm_rbf_confusion_matrix.csv",
+            "confusion_matrix_png": "model\\confusion_matrices\\svm_rbf_confusion_matrix.png"
+        },
+        "knn": {
+            "cv_accuracy_mean": 0.9259,
+            "cv_precision_mean": 0.9257,
+            "cv_recall_mean": 0.7628,
+            "cv_f1_mean": 0.832,
+            "cv_roc_auc_mean": 0.9718,
+            "test_accuracy": 0.9074,
+            "test_precision": 1.0,
+            "test_recall": 0.6154,
+            "test_f1": 0.7619,
+            "test_roc_auc": 0.9099,
+            "confusion_matrix": [
+                [
+                    82,
+                    0
+                ],
+                [
+                    10,
+                    16
+                ]
+            ],
+            "confusion_matrix_csv": "model\\confusion_matrices\\knn_confusion_matrix.csv",
+            "confusion_matrix_png": "model\\confusion_matrices\\knn_confusion_matrix.png"
+        },
+        "decision_tree": {
+            "cv_accuracy_mean": 0.91,
+            "cv_precision_mean": 0.7863,
+            "cv_recall_mean": 0.8675,
+            "cv_f1_mean": 0.8229,
+            "cv_roc_auc_mean": 0.917,
+            "test_accuracy": 0.8241,
+            "test_precision": 0.6207,
+            "test_recall": 0.6923,
+            "test_f1": 0.6545,
+            "test_roc_auc": 0.7781,
+            "confusion_matrix": [
+                [
+                    71,
+                    11
+                ],
+                [
+                    8,
+                    18
+                ]
+            ],
+            "confusion_matrix_csv": "model\\confusion_matrices\\decision_tree_confusion_matrix.csv",
+            "confusion_matrix_png": "model\\confusion_matrices\\decision_tree_confusion_matrix.png"
+        },
+        "gradient_boosting": {
+            "cv_accuracy_mean": 0.9445,
+            "cv_precision_mean": 0.9131,
+            "cv_recall_mean": 0.858,
+            "cv_f1_mean": 0.8831,
+            "cv_roc_auc_mean": 0.9886,
+            "test_accuracy": 0.8889,
+            "test_precision": 0.8182,
+            "test_recall": 0.6923,
+            "test_f1": 0.75,
+            "test_roc_auc": 0.9629,
+            "confusion_matrix": [
+                [
+                    78,
+                    4
+                ],
+                [
+                    8,
+                    18
+                ]
+            ],
+            "confusion_matrix_csv": "model\\confusion_matrices\\gradient_boosting_confusion_matrix.csv",
+            "confusion_matrix_png": "model\\confusion_matrices\\gradient_boosting_confusion_matrix.png"
+        },
+        "ann_mlp": {
+            "cv_accuracy_mean": 0.9584,
+            "cv_precision_mean": 0.9432,
+            "cv_recall_mean": 0.8866,
+            "cv_f1_mean": 0.9122,
+            "cv_roc_auc_mean": 0.9941,
+            "test_accuracy": 0.9537,
+            "test_precision": 0.92,
+            "test_recall": 0.8846,
+            "test_f1": 0.902,
+            "test_roc_auc": 0.993,
+            "confusion_matrix": [
+                [
+                    80,
+                    2
+                ],
+                [
+                    3,
+                    23
+                ]
+            ],
+            "confusion_matrix_csv": "model\\confusion_matrices\\ann_mlp_confusion_matrix.csv",
+            "confusion_matrix_png": "model\\confusion_matrices\\ann_mlp_confusion_matrix.png"
+        }
+    }
+}

@@ -1,0 +1,8 @@
+model,cv_accuracy_mean,cv_precision_mean,cv_recall_mean,cv_f1_mean,cv_roc_auc_mean,test_accuracy,test_precision,test_recall,test_f1,test_roc_auc,confusion_matrix,confusion_matrix_csv,confusion_matrix_png
+ann_mlp,0.9584,0.9432,0.8866,0.9122,0.9941,0.9537,0.92,0.8846,0.902,0.993,"[[80, 2], [3, 23]]",model\confusion_matrices\ann_mlp_confusion_matrix.csv,model\confusion_matrices\ann_mlp_confusion_matrix.png
+logistic_regression,0.9653,0.8928,0.981,0.9336,0.9954,0.9259,0.7812,0.9615,0.8621,0.9892,"[[75, 7], [1, 25]]",model\confusion_matrices\logistic_regression_confusion_matrix.csv,model\confusion_matrices\logistic_regression_confusion_matrix.png
+svm_rbf,0.9445,0.845,0.9524,0.8943,0.9923,0.9074,0.7857,0.8462,0.8148,0.9845,"[[76, 6], [4, 22]]",model\confusion_matrices\svm_rbf_confusion_matrix.csv,model\confusion_matrices\svm_rbf_confusion_matrix.png
+knn,0.9259,0.9257,0.7628,0.832,0.9718,0.9074,1.0,0.6154,0.7619,0.9099,"[[82, 0], [10, 16]]",model\confusion_matrices\knn_confusion_matrix.csv,model\confusion_matrices\knn_confusion_matrix.png
+gradient_boosting,0.9445,0.9131,0.858,0.8831,0.9886,0.8889,0.8182,0.6923,0.75,0.9629,"[[78, 4], [8, 18]]",model\confusion_matrices\gradient_boosting_confusion_matrix.csv,model\confusion_matrices\gradient_boosting_confusion_matrix.png
+random_forest,0.9491,0.9182,0.8766,0.8941,0.9884,0.8704,0.75,0.6923,0.72,0.9554,"[[76, 6], [8, 18]]",model\confusion_matrices\random_forest_confusion_matrix.csv,model\confusion_matrices\random_forest_confusion_matrix.png
+decision_tree,0.91,0.7863,0.8675,0.8229,0.917,0.8241,0.6207,0.6923,0.6545,0.7781,"[[71, 11], [8, 18]]",model\confusion_matrices\decision_tree_confusion_matrix.csv,model\confusion_matrices\decision_tree_confusion_matrix.png
