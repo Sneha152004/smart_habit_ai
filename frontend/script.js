@@ -260,6 +260,7 @@ function displayInsights(data) {
     const isBadDay = data.bad_day || false;
     const badge = document.getElementById('gentle-mode-badge');
     if (badge) badge.style.display = isBadDay ? 'flex' : 'none';
+    
     const welcome = document.getElementById('welcome-msg');
     const username = localStorage.getItem('username') || "Alex";
     if (welcome) welcome.innerText = isBadDay ? `Deep Breath, ${username}.` : `Good Evening, ${username}`;

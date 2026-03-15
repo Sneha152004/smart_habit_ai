@@ -2,6 +2,7 @@ import joblib
 import numpy as np
 import pandas as pd
 import os
+import json
 import traceback
 
 class SmartHabitEngine:
@@ -9,17 +10,20 @@ class SmartHabitEngine:
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
         self.model_dir = os.path.join(os.path.dirname(self.base_dir), 'model')
         
-        self.model_path = os.path.join(self.model_dir, 'logistic_regression_model.pkl')
-        self.scaler_path = os.path.join(self.model_dir, 'feature_scaler.pkl')
+        self.best_model_path = os.path.join(self.model_dir, 'best_model.pkl')
+        self.all_models_path = os.path.join(self.model_dir, 'all_models.pkl')
+        self.feature_cols_path = os.path.join(self.model_dir, 'feature_columns.pkl')
 
         try:
-            self.model = joblib.load(self.model_path)
-            self.scaler = joblib.load(self.scaler_path)
-            print("Models loaded successfully.")
+            self.best_model = joblib.load(self.best_model_path)
+            self.all_models = joblib.load(self.all_models_path)
+            self.feature_columns = joblib.load(self.feature_cols_path)
+            print(f"Loaded {len(self.all_models)} models successfully.")
         except Exception as e:
-            print(f"ML Model not loaded, using deterministic fallback: {str(e)}")
-            self.model = None
-            self.scaler = None
+            print(f"ML Models not loaded, using fallback: {str(e)}")
+            self.best_model = None
+            self.all_models = {}
+            self.feature_columns = None
 
     def calculate_routine_strength(self, data):
         # Normalization from Pipeline PDF Page 1
@@ -44,30 +48,50 @@ class SmartHabitEngine:
         )
         return min(strength, 1.0), norms
 
-    def get_insights(self, data):
+    def get_insights(self, data, model_choice=None):
         routine_strength, norms = self.calculate_routine_strength(data)
         motivation_score = routine_strength * 100
-
-        # Deterministic Base (Pipeline Page 1)
         p_slip_prob = 1.0 - routine_strength
         
-        if self.model and self.scaler:
+        # Determine which model to use
+        active_model = self.best_model
+        model_display_name = "Advanced ML"
+        
+        if model_choice and model_choice in self.all_models:
+            active_model = self.all_models[model_choice]
+            model_display_name = model_choice.replace('_', ' ').title()
+        elif self.best_model:
+            # Get best model name from summary
+            summary_path = os.path.join(self.model_dir, 'training_summary.json')
+            if os.path.exists(summary_path):
+                with open(summary_path, 'r') as f:
+                    summary = json.load(f)
+                    best_name = summary.get('best_model_name', 'best_model')
+                    model_display_name = best_name.replace('_', ' ').title()
+        
+        if active_model and self.feature_columns:
             try:
-                # Prepare data for ML refine
-                features_df = pd.DataFrame([{
-                    'sleep_hours': float(data['sleep_hours']),
-                    'study_hours': float(data['study_hours']),
-                    'workout_minutes': float(data['workout_minutes']),
-                    'journal_minutes': float(data['journal_minutes']),
-                    'reading_minutes': float(data['reading_minutes']),
-                    'mood': float(data['mood'])
-                }])
-                scaled_X = self.scaler.transform(features_df)
-                ml_prob = self.model.predict_proba(scaled_X)[0][1]
-                # Refine slip probability with ML prediction
+                from datetime import datetime
+                now = datetime.now()
+                features_dict = {
+                    'sleep_hours': float(data.get('sleep_hours', 0)),
+                    'study_hours': float(data.get('study_hours', 0)),
+                    'workout_minutes': float(data.get('workout_minutes', 0)),
+                    'journalling_minutes': float(data.get('journal_minutes', 0)),
+                    'reading_minutes': float(data.get('reading_minutes', 0)),
+                    'mood': float(data.get('mood', 3)),
+                    'day_of_week': now.weekday(),
+                    'is_weekend': 1 if now.weekday() in [5, 6] else 0
+                }
+                features_df = pd.DataFrame([features_dict])
+                # Ensure correct column order
+                features_df = features_df[self.feature_columns]
+                
+                ml_prob = active_model.predict_proba(features_df)[0][1]
                 p_slip_prob = (p_slip_prob + ml_prob) / 2
             except Exception as e:
-                print(f"ML refine error: {e}")
+                print(f"ML error: {e}")
+                traceback.print_exc()
 
         p_slip_class = 1 if p_slip_prob > 0.6 else 0
 
@@ -88,9 +112,7 @@ class SmartHabitEngine:
         streak_protection = p_slip_prob > 0.7
 
         # Micro-Recommendations (Pipeline Page 4)
-        # Find all habits that are "weak" (below 0.6 norm)
         weak_habits = [h for h, v in norms.items() if v < 0.6]
-        # If none are below 0.6, just take the minimum one
         if not weak_habits:
             weak_habits = [min(norms, key=norms.get)]
         
@@ -109,7 +131,6 @@ class SmartHabitEngine:
                 'mood': {"text": "Take a 5-minute deep breathing break.", "duration": 300}
             }
             
-            # Streak Protection Overrides
             if streak_protection:
                 if habit == 'study':
                     recs_map['study'] = {"text": "Mini Session: 15 minutes study.", "duration": 900}
@@ -124,10 +145,7 @@ class SmartHabitEngine:
                     "duration": res_rec["duration"]
                 })
 
-        # For backward compatibility and breakdown pinpointing
         primary_weakest = min(norms, key=norms.get)
-
-        # Task 2: Slip Percentage Category Messaging
         slip_percentage = round(float(p_slip_prob) * 100)
         category = "On Track"
         if 31 <= slip_percentage <= 60:
@@ -141,6 +159,7 @@ class SmartHabitEngine:
             "p_slip_prob": round(float(p_slip_prob), 2),
             "slip_percentage": slip_percentage,
             "category": category,
+            "model_name": model_display_name,
             "p_slip_class": int(p_slip_class),
             "motivation_score": round(motivation_score, 1),
             "difficulty_adjustment": difficulty,
@@ -148,9 +167,9 @@ class SmartHabitEngine:
             "bad_day": bool(bad_day),
             "burnout_risk": round(float(burnout_risk), 2),
             "weakest_habit": primary_weakest,
-            "recommendations": all_recommendations, # New multi-rec field
-            "recommendation": all_recommendations[0]["text"], # Primary for display
-            "timer_seconds": all_recommendations[0]["duration"], # Primary for display
+            "recommendations": all_recommendations,
+            "recommendation": all_recommendations[0]["text"],
+            "timer_seconds": all_recommendations[0]["duration"],
             "mood": int(data.get('mood', 3)),
             "norms": norms
         }

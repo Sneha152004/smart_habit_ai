@@ -68,13 +68,14 @@ def static_proxy(path):
 def log_daily_data():
     current_user_id = get_jwt_identity()
     data = request.get_json()
+    model_choice = data.get('model_choice') # Allow choosing model
     
     # Task 1: Validation
     if not validate_habit_data(data):
         return jsonify({"error": "Invalid input value"}), 400
 
     try:
-        insights = engine.get_insights(data)
+        insights = engine.get_insights(data, model_choice=model_choice)
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('''
