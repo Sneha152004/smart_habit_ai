@@ -68,6 +68,7 @@
                 <a href="#" class="nav-item active" onclick="showView('dashboard')"><i class="fas fa-th-large"></i> Dashboard</a>
                 <a href="#" class="nav-item" onclick="showView('log')"><i class="fas fa-edit"></i> Daily Log</a>
                 <a href="#" class="nav-item" onclick="showView('history-list')"><i class="fas fa-history"></i> History</a>
+                <a href="#" class="nav-item" onclick="showView('rewards')"><i class="fas fa-award"></i> Rewards</a>
                 <a href="#" class="nav-item" onclick="showView('breakdown')"><i class="fas fa-chart-line"></i> Breakdown</a>
             </nav>
             <div class="sidebar-footer">
@@ -290,8 +291,32 @@
                 </div>
             </div>
 
+            <!-- Rewards View -->
+            <div id="rewards-view" class="view" style="display: none;">
+                <header class="view-header">
+                    <h1>Weekly Trophy Case</h1>
+                    <p>Your adaptive rewards based on routine consistency.</p>
+                </header>
+                <div id="trophy-grid" class="dashboard-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+                    <!-- Weekly badges will be injected here -->
+                </div>
+            </div>
+
             </div>
         </main>
+    </div>
+
+    <!-- Badge Earned Modal -->
+    <div id="badge-modal" class="modal">
+        <div class="modal-content badge-earned-content" style="text-align: center; background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid var(--primary);">
+            <div class="confetti-container"></div>
+            <h1 id="earned-badge-icon" style="font-size: 5rem; margin-bottom: 20px;">🏆</h1>
+            <h2 id="earned-badge-name" style="color: var(--primary); letter-spacing: 2px;">Consistency Champion</h2>
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.1);">
+                <p id="earned-badge-message" style="font-size: 1.1rem; font-style: italic; line-height: 1.6;">Your discipline is structured. You're designing your future intentionally.</p>
+            </div>
+            <button onclick="closeBadgeModal()" class="primary-btn" style="width: auto; padding: 12px 40px;">Continue Journey</button>
+        </div>
     </div>
 
     <!-- Timer Overlay -->

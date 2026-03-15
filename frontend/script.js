@@ -138,6 +138,64 @@ function showView(viewId) {
     }
     if (viewId === 'breakdown') { loadBreakdown(); }
     if (viewId === 'history-list') { loadHistory(); }
+    if (viewId === 'rewards') { loadRewards(); }
+}
+
+async function loadRewards() {
+    try {
+        const res = await fetch(`${API_URL}/weekly_summaries`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+            const data = await res.json();
+            const grid = document.getElementById('trophy-grid');
+            grid.innerHTML = '';
+            
+            if (data.summaries.length === 0) {
+                grid.innerHTML = `<div class="card" style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                    <i class="fas fa-lock" style="font-size: 3rem; opacity: 0.2; margin-bottom: 20px;"></i>
+                    <h3>Trophy Case Empty</h3>
+                    <p>Complete your week to earn an adaptive badge.</p>
+                </div>`;
+            }
+
+            data.summaries.forEach(s => {
+                grid.innerHTML += `
+                    <div class="card trophy-card" style="text-align: center; border-top: 4px solid var(--primary);">
+                        <div style="font-size: 3.5rem; margin-bottom: 15px;">${s.icon}</div>
+                        <h3 style="margin-bottom: 10px;">${s.name}</h3>
+                        <p style="font-size: 0.85rem; opacity: 0.8; font-style: italic; line-height: 1.4;">${s.message}</p>
+                        <div style="margin-top: 15px; font-size: 0.7rem; opacity: 0.5;">Week Ending: ${s.date}</div>
+                    </div>
+                `;
+            });
+            
+            updateWeeklyDots(data.current_week_count);
+        }
+    } catch (e) { console.error("Error loading rewards:", e); }
+}
+
+function updateWeeklyDots(count) {
+    // Progress dots removed from UI, keeping logic for potential future use 
+    // but ensuring no errors occur.
+}
+
+function openBadgeModal(badge) {
+    document.getElementById('earned-badge-icon').innerText = badge.icon;
+    document.getElementById('earned-badge-name').innerText = badge.name;
+    document.getElementById('earned-badge-message').innerText = badge.message;
+    document.getElementById('badge-modal').style.display = 'flex';
+    
+    // Extra confetti for the big win
+    confetti({
+        particleCount: 200,
+        spread: 90,
+        origin: { y: 0.6 }
+    });
+}
+
+function closeBadgeModal() {
+    document.getElementById('badge-modal').style.display = 'none';
 }
 
 async function loadHistory() {
@@ -221,11 +279,11 @@ async function loadDashboard() {
     if (res.ok) {
         const history = await res.json();
         if (history.length > 0) { 
-            // Re-fetch insights if we don't have recommendations in history
-            // Actually, let's just use the displayInsights which handles the rendering
             displayInsights(history[0]); 
         }
     }
+    // New: Always refresh weekly progress and check for new badges on load
+    loadRewards(); 
 }
 
 async function submitLog() {
@@ -250,6 +308,12 @@ async function submitLog() {
             const insights = await res.json();
             habitCompletedMap = {}; // Reset on new entry
             displayInsights(insights);
+            
+            // New: Show badge modal if earned
+            if (insights.weekly_badge) {
+                setTimeout(() => openBadgeModal(insights.weekly_badge), 1000);
+            }
+
             showView('dashboard');
         }
     } catch (e) { alert("Error connecting to server."); }

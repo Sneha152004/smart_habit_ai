@@ -26,8 +26,8 @@ def init_db():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS daily_logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            date TEXT NOT NULL,
+            user_id INTEGER,
+            date TEXT,
             sleep_hours REAL,
             study_hours REAL,
             workout_minutes REAL,
@@ -47,6 +47,21 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users (id)
         )
     ''')
+
+    # New: Weekly Summaries Table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS weekly_summaries (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            week_end_date TEXT,
+            avg_p_slip REAL,
+            badge_name TEXT,
+            badge_icon TEXT,
+            supportive_message TEXT,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    ''')
+
     
     conn.commit()
     conn.close()

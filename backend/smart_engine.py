@@ -48,6 +48,45 @@ class SmartHabitEngine:
         )
         return min(strength, 1.0), norms
 
+    def calculate_weekly_badge(self, avg_p_slip):
+        # Weekly Adaptive Badge System based on avg_p_slip
+        if avg_p_slip >= 0.85:
+            return {
+                "name": "Resilience in Progress",
+                "icon": "💛",
+                "message": "This week was tough, but you showed up. That matters more than perfection."
+            }
+        elif avg_p_slip >= 0.70:
+            return {
+                "name": "Fighting Through",
+                "icon": "🔥",
+                "message": "You're facing resistance, but you haven't stopped. Let's tighten the routine slightly."
+            }
+        elif avg_p_slip >= 0.50:
+            return {
+                "name": "Steady Builder",
+                "icon": "🧱",
+                "message": "Your routine is stabilizing. One more push can move you into the momentum zone."
+            }
+        elif avg_p_slip >= 0.30:
+            return {
+                "name": "Momentum Maker",
+                "icon": "🚀",
+                "message": "You're building rhythm. Keep protecting this momentum."
+            }
+        elif avg_p_slip >= 0.10:
+            return {
+                "name": "Consistency Champion",
+                "icon": "🏆",
+                "message": "Your routine is becoming identity-level strong. Excellent work!"
+            }
+        else:
+            return {
+                "name": "Habit Architect",
+                "icon": "👑",
+                "message": "Your discipline is structured. You're designing your future intentionally."
+            }
+
     def get_insights(self, data, model_choice=None):
         routine_strength, norms = self.calculate_routine_strength(data)
         motivation_score = routine_strength * 100
