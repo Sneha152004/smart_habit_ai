@@ -47,7 +47,7 @@ const MOTIVATIONAL_MESSAGES = {
         "Your goals require effort. The time to recommit is now."
     ],
     reset_mode: "Stop. Breathe. This is not the end of your progress — but it can become the start of decline if ignored. Reset your habits today. Even one disciplined action right now shifts your direction.",
-    habit_personalization: {
+    mood: {
         sleep: "Your recovery is suffering.",
         study: "Your focus is slipping.",
         workout: "Energy follows movement.",
@@ -57,7 +57,19 @@ const MOTIVATIONAL_MESSAGES = {
     }
 };
 
-// Initial UI Check
+const SLIP_MESSAGES = {
+    range_0_10: ["Excellent Control", "Highly Consistent"],
+    range_11_20: ["Very Good", "Strong Rhythm"],
+    range_21_30: ["Slight Risk", "Stay Attentive"],
+    range_31_40: ["Moderate Risk", "Needs Reinforcement"],
+    range_41_50: ["Unstable", "Focus on Primary Habit"],
+    range_51_60: ["High Warning", "Consistency Dropping"],
+    range_61_70: ["High Risk", "Losing Stability"],
+    range_71_80: ["Critical Zone", "Immediate Correction Needed"],
+    range_81_90: ["Danger Zone", "Routine Collapse Likely"],
+    range_91_100: ["Failure Risk", "Immediate Reset Required"]
+};
+
 if (token) { showMain(); }
 
 function toggleAuth() {
@@ -177,7 +189,6 @@ async function loadRewards() {
 
 function updateWeeklyDots(count) {
     // Progress dots removed from UI, keeping logic for potential future use 
-    // but ensuring no errors occur.
 }
 
 function openBadgeModal(badge) {
@@ -186,12 +197,7 @@ function openBadgeModal(badge) {
     document.getElementById('earned-badge-message').innerText = badge.message;
     document.getElementById('badge-modal').style.display = 'flex';
     
-    // Extra confetti for the big win
-    confetti({
-        particleCount: 200,
-        spread: 90,
-        origin: { y: 0.6 }
-    });
+    confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 } });
 }
 
 function closeBadgeModal() {
@@ -207,24 +213,12 @@ async function loadHistory() {
         const tableBody = document.getElementById('history-table-body');
         tableBody.innerHTML = '';
         
-        // Group by date to ensure "day-wise" view (latest entry per day)
-        const dayWise = {};
-        history.forEach(entry => {
-            if (!dayWise[entry.date]) {
-                dayWise[entry.date] = entry;
-            }
-        });
-
-        const sortedDates = Object.keys(dayWise).sort((a, b) => new Date(b) - new Date(a));
-        
         const moodIcons = { 1: "😢", 2: "😕", 3: "😐", 4: "😊", 5: "🤩" };
 
-        sortedDates.forEach(date => {
-            const entry = dayWise[date];
+        history.forEach(entry => {
             const prob = entry.p_slip_prob || 0;
             const slipPercentage = Math.round(prob * 100);
             
-            // Re-calculate category if not present in history entry
             let category = "On Track";
             let colorClass = "text-primary";
             if (slipPercentage > 80) { category = "Critical"; colorClass = "text-danger"; }
@@ -282,7 +276,6 @@ async function loadDashboard() {
             displayInsights(history[0]); 
         }
     }
-    // New: Always refresh weekly progress and check for new badges on load
     loadRewards(); 
 }
 
@@ -298,18 +291,15 @@ async function submitLog() {
     try {
         const res = await fetch(`${API_URL}/log`, {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify(data)
         });
         if (res.ok) {
             const insights = await res.json();
-            habitCompletedMap = {}; // Reset on new entry
-            displayInsights(insights);
+            habitCompletedMap = {}; 
             
-            // New: Show badge modal if earned
+            await loadDashboard();
+
             if (insights.weekly_badge) {
                 setTimeout(() => openBadgeModal(insights.weekly_badge), 1000);
             }
@@ -329,42 +319,39 @@ function displayInsights(data) {
     const username = localStorage.getItem('username') || "Alex";
     if (welcome) welcome.innerText = isBadDay ? `Deep Breath, ${username}.` : `Good Evening, ${username}`;
     
-    // Slip Chance
     const prob = data.p_slip_prob !== undefined ? data.p_slip_prob : 0;
     const slipChance = data.slip_percentage !== undefined ? data.slip_percentage : Math.round(prob * 100);
     const slipEl = document.getElementById('p-slip-prob');
     slipEl.innerText = `${slipChance}%`;
     
-    // Task 2: Use Category from Backend if available
     let statusText = data.category || "Stable";
-    let statusMsg = "You're on track, but stay consistent. Small lapses can increase risk.";
-    let statusColor = "var(--primary)"; // Teal/Blue
+    let statusColor = "var(--primary)";
 
-    // Map categories to colors
-    if (statusText === "On Track") {
-        statusMsg = "You’re doing great! Very low risk of slipping. Keep the momentum going.";
-        statusColor = "var(--primary)";
-    } else if (statusText === "Moderate Risk") {
-        const lowHabit = data.weakest_habit ? data.weakest_habit : "your routine";
-        statusMsg = `Warning: Your consistency is dropping. Try to improve ${lowHabit} today.`;
-        statusColor = "var(--warning)";
-    } else if (statusText === "High Risk") {
-        statusMsg = "High risk of slipping! Take corrective action today. Focus on your weakest habit.";
-        statusColor = "#f59e0b"; // Orange
-    } else if (statusText === "Very High Risk") {
-        statusText = "Critical";
-        statusMsg = "Critical slip risk! Immediate action needed. Reset your routine today.";
-        statusColor = "var(--danger)";
-    }
+    let msgPool = [];
+    if (slipChance <= 10) msgPool = SLIP_MESSAGES.range_0_10;
+    else if (slipChance <= 20) msgPool = SLIP_MESSAGES.range_11_20;
+    else if (slipChance <= 30) msgPool = SLIP_MESSAGES.range_21_30;
+    else if (slipChance <= 40) msgPool = SLIP_MESSAGES.range_31_40;
+    else if (slipChance <= 50) msgPool = SLIP_MESSAGES.range_41_50;
+    else if (slipChance <= 60) msgPool = SLIP_MESSAGES.range_51_60;
+    else if (slipChance <= 70) msgPool = SLIP_MESSAGES.range_61_70;
+    else if (slipChance <= 80) msgPool = SLIP_MESSAGES.range_71_80;
+    else if (slipChance <= 90) msgPool = SLIP_MESSAGES.range_81_90;
+    else msgPool = SLIP_MESSAGES.range_91_100;
+    
+    const statusMsg = msgPool[Math.floor(Math.random() * msgPool.length)];
+
+    if (statusText === "On Track") statusColor = "var(--primary)";
+    else if (statusText === "Moderate Risk") statusColor = "var(--warning)";
+    else if (statusText === "High Risk") statusColor = "#f59e0b";
+    else if (statusText === "Very High Risk") { statusText = "Critical"; statusColor = "var(--danger)"; }
 
     const riskBadge = document.getElementById('risk-badge');
     riskBadge.innerText = statusText;
     riskBadge.style.background = statusColor;
     
-    // Dynamic Motivation Selection
     const momentumCard = document.getElementById('ai-momentum-card');
     const motivationEl = document.getElementById('dynamic-motivation');
-    const personalEl = document.getElementById('habit-personal-msg');
     
     let pool = [];
     momentumCard.classList.remove('reset-mode');
@@ -379,26 +366,23 @@ function displayInsights(data) {
         else pool = MOTIVATIONAL_MESSAGES.very_high_risk;
 
         const randomMsg = pool[Math.floor(Math.random() * pool.length)];
-        motivationEl.innerText = randomMsg;
+        if(motivationEl) motivationEl.innerText = randomMsg;
     }
 
     const msgEl = document.getElementById('consistency-msg');
     if (msgEl) msgEl.innerText = statusMsg;
 
-    // Slip Color Logic (Bad thing: High = Danger)
     slipEl.className = prob > 0.6 ? 'text-danger' : (prob > 0.3 ? 'text-warning' : 'text-primary');
 
-    // Motivation Gauge
     const score = Math.round(data.motivation_score || 0);
     const scoreEl = document.getElementById('motivation-score');
     scoreEl.innerText = score;
     const gauge = document.querySelector('.circular-progress');
     gauge.style.setProperty('--progress', score);
     
-    // Motivation Color Logic (Good thing: Low = Danger)
     const mStatus = (score < 40 ? 'low' : (score < 70 ? 'moderate' : 'high'));
     gauge.className = 'circular-progress ' + mStatus;
-    scoreEl.className = 'status-' + mStatus; // New class for number color
+    scoreEl.className = 'status-' + mStatus; 
     
     const adjCard = document.getElementById('daily-adj-card');
     const restCard = document.getElementById('rest-recover-card');
@@ -407,7 +391,6 @@ function displayInsights(data) {
     const diffAdj = document.getElementById('difficulty-adjustment');
     if (diffAdj) diffAdj.innerText = data.difficulty_adjustment || "Maintain current level.";
     
-    // Recommendations Rendering
     const recList = document.getElementById('rec-list');
     recList.innerHTML = ''; 
     
@@ -420,7 +403,7 @@ function displayInsights(data) {
     recs.forEach(rec => {
         const habitKey = rec.habit.toUpperCase();
         const isCompleted = habitCompletedMap[habitKey] || false;
-        const tickHtml = isCompleted ? '<i class="fas fa-check-circle text-primary" style="margin-left: auto; font-size: 1.5rem;"></i>' : '';
+        const tickHtml = isCompleted ? `<i class="fas fa-check-circle text-primary" style="margin-left: auto; font-size: 1.5rem;"></i>` : '';
         const timerBtnHtml = !isCompleted && rec.duration > 0 ? `<button class="timer-btn" onclick="openTimerModal(${rec.duration}, '${habitKey}')"><i class="fas fa-play-circle"></i></button>` : tickHtml;
 
         recList.innerHTML += `
@@ -435,7 +418,6 @@ function displayInsights(data) {
         `;
     });
 
-    // Burnout
     const burnoutValue = data.burnout_risk !== undefined ? data.burnout_risk : 0;
     const burnout = Math.round(burnoutValue * 100);
     const burnoutEl = document.getElementById('burnout-risk-val');
@@ -443,7 +425,6 @@ function displayInsights(data) {
     const burnoutBar = document.getElementById('burnout-bar');
     burnoutBar.style.width = `${burnout}%`;
     
-    // Dynamic classes for Burnout card
     const burnoutCard = document.querySelector('.burnout-risk');
     if (burnoutCard) {
         burnoutCard.classList.remove('status-good', 'status-warning', 'status-danger');
@@ -454,17 +435,13 @@ function displayInsights(data) {
 
     const icons = { 1: "😢", 2: "😕", 3: "😐", 4: "😊", 5: "🤩" };
     const moodStatusMap = {
-        1: "Feeling Down",
-        2: "Low Energy",
-        3: "Stable & Balanced",
-        4: "Feeling Good",
-        5: "Ready to Conquer"
+        1: "Feeling Down", 2: "Low Energy", 3: "Stable & Balanced",
+        4: "Feeling Good", 5: "Ready to Conquer"
     };
     const moodVal = data.mood || 3;
     document.getElementById('mood-icon').innerText = isBadDay ? "🌧️" : (icons[moodVal] || "✨");
     document.getElementById('mood-status').innerText = isBadDay ? "Low Energy Mode" : (moodStatusMap[moodVal] || "Balanced & Ready.");
 
-    // Dynamic classes for Emotional State card
     const moodCard = document.querySelector('.emotional-state');
     if (moodCard) {
         moodCard.classList.remove('status-good', 'status-warning', 'status-danger');
@@ -488,28 +465,21 @@ async function loadBreakdown() {
                 habits.forEach(h => {
                     const val = norms[h] || 0;
                     const bar = document.getElementById(`bar-${h}`);
-                    
-                    // Cap width at 100% and show a minimum of 5% for visibility
                     const percentage = Math.round(val * 100);
                     const displayWidth = val > 0 ? Math.min(100, Math.max(5, percentage)) : 0;
                     bar.style.width = `${displayWidth}%`;
                     
-                    // Clear and re-apply color classes
                     bar.classList.remove('low', 'moderate', 'high');
-                    if (val < 0.4) {
-                        bar.classList.add('low');
-                    } else if (val < 0.7) {
-                        bar.classList.add('moderate');
-                    } else {
-                        bar.classList.add('high');
-                    }
+                    if (val < 0.4) bar.classList.add('low');
+                    else if (val < 0.7) bar.classList.add('moderate');
+                    else bar.classList.add('high');
                 });
             }
         }
     }
 }
 
-let activeHabit = ""; // Track which habit timer is running
+let activeHabit = ""; 
 
 function openTimerModal(seconds, habit) {
     if (seconds <= 0) return;
@@ -532,16 +502,9 @@ function runTimer() {
             habitCompletedMap[activeHabit] = true;
             document.getElementById('timer-modal').style.display = 'none';
             
-            // Fun Confetti Effect
-            confetti({
-                particleCount: 150,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#2dd4bf', '#6366f1', '#f59e0b']
-            });
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#2dd4bf', '#6366f1', '#f59e0b'] });
 
             alert("Session complete! Reward earned.");
-            // Refresh dashboard locally to show tick
             loadDashboard(); 
         }
     }, 1000);
