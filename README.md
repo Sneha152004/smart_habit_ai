@@ -1,52 +1,54 @@
 # Smart Habit AI 🧠✨
 
-Smart Habit AI is a premium, full-stack habit tracking application that uses an ensemble of machine learning models and a rule-based intelligence engine to optimize your daily routine. It predicts behavioral "slips" and provides proactive, psychologically-informed coaching to ensure long-term consistency.
+Smart Habit AI is a premium, full-stack habit tracking application that uses a **Hybrid Intelligence Engine**—combining optimized Machine Learning with a rule-based deterministic layer—to optimize your daily routine. It predicts behavioral "slips" and provides proactive, psychologically-informed coaching to ensure long-term consistency.
 
 ![Dashboard Preview](interfaces/Screenshot%202026-02-16%20201036.png)
 
 ## 🚀 Key Features
 
-- **Ensemble AI Slip Prediction:** Uses a consensus of **7 different AI classifiers** (ANN, Random Forest, SVM, etc.) to predict routine instability with high precision.
-- **Weekly Adaptive Badges:** A calendar-aware (Sun-Sat) reward system that assigns psychological badges and supportive feedback based on your weekly performance.
-- **Dynamic Intelligence Engine:** Calculates **Motivation Score**, **Burnout Risk**, and **Routine Strength** using custom weighted algorithms.
-- **Interactive Micro-Actions:** Provides tailored recommendations (e.g., "20-minute Study Sprint") with integrated timers and celebratory rewards.
-- **Mistake-Proof Logging:** Intelligent "Log Overwriting" allows you to correct daily entries without creating duplicates or desyncing your dashboard.
-- **Premium Glassmorphism UI:** A modern, immersive interface with moving gradients, staggered animations, and real-time habit breakdown visualizations.
-- **Secure Authentication:** Robust JWT-based security with a seamless login/registration experience.
+- **Hybrid Slip Prediction:** Uses a consensus between a high-precision **ANN (MLP Classifier)** and a deterministic behavioral engine to predict routine instability.
+- **7-Model ML Hub:** Features a pre-trained library of 7 AI classifiers (Random Forest, SVM, Gradient Boosting, etc.) used to identify the optimal "Champion Model" for prediction.
+- **Weekly Adaptive Badges:** A calendar-aware (Mon-Sun) reward system that assigns psychological badges and supportive feedback based on your weekly slip-probability averages.
+- **Dynamic Intelligence Engine:** Calculates **Motivation Score**, **Burnout Risk**, and **Routine Strength** using custom weighted behavioral algorithms.
+- **Interactive Micro-Actions:** Provides tailored recommendations (e.g., "15-minute Study Sprint") with integrated countdown timers and celebratory rewards.
+- **Mistake-Proof Logging:** Intelligent "Log Overwriting" architecture allows you to correct daily entries without creating duplicates or desyncing your dashboard.
+- **Premium Glassmorphism UI:** A modern, immersive interface with frosted-glass effects, moving gradients, and real-time habit visualizations.
+- **Secure Authentication:** Robust JWT-based security with salted password hashing for a seamless login/registration experience.
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** HTML5, CSS3 (Vanilla), JavaScript (ES6+), Chart.js, FontAwesome, Canvas-Confetti.
-- **Backend:** Flask (Python), Flask-JWT-Extended, Flask-CORS.
-- **Database:** SQLite3 (Direct schema management with automated migrations).
+- **Frontend:** HTML5, CSS3 (Vanilla Glassmorphism), JavaScript (ES6+), Chart.js, FontAwesome, Canvas-Confetti.
+- **Backend:** Flask (Python), Flask-JWT-Extended, Flask-CORS, Werkzeug Security.
+- **Database:** SQLite3 (Relational schema with automated log synchronization).
 - **Machine Learning:** Scikit-Learn, Pandas, Joblib, NumPy.
 
 ## 🧠 Advanced Intelligence Engine
 
 The system employs a multi-layered analytical approach:
-1.  **Ensemble Layer:** Parallel predictions from 7 pre-trained models are averaged to provide a stable, "wisdom of the crowd" slip probability.
+1.  **Hybrid Ensemble Layer:** The system averages the probability from the **Champion ML Model** (ANN) with a **Deterministic Strength Score** to provide a grounded, "fail-safe" slip probability.
 2.  **Deterministic Layer:** Real-time habit scoring based on validated behavioral weights:
     - **Sleep:** 25% | **Study:** 25% | **Mood:** 20%
     - **Workout:** 10% | **Reading:** 10% | **Journal:** 10%
-3.  **Adaptive Feedback:** Motivational tone and badge assignments are dynamically adjusted based on the predicted psychological state of the user.
+3.  **Adaptive Feedback:** Motivational tone and badge assignments are dynamically adjusted based on the predicted psychological state and burnout risk of the user.
 
 ## 📂 Project Structure
 
 ```text
 Smart Habit AI/
 ├── backend/               # Flask API & Intelligence Engine
-│   ├── app.py             # Main entry point (JWT, Routes)
-│   ├── smart_engine.py    # Multi-model Ensemble logic
+│   ├── app.py             # Main entry point (JWT, Routes, Logic)
+│   ├── smart_engine.py    # Hybrid ML + Rule-based Engine
+│   ├── auth.py            # Secure JWT Authentication & Hashing
 │   └── database.py        # SQLite schema & persistence
 ├── frontend/              # Vanilla JS/CSS3 Glassmorphism UI
 ├── model/                 # AI Model Hub
-│   ├── all_models.pkl     # 7-model Ensemble (ANN, RF, SVM, etc.)
-│   ├── best_model.pkl     # Primary ANN MLP model
-│   └── training_summary.json # Accuracy & Performance stats
+│   ├── all_models.pkl     # Library of 7 Pre-trained Classifiers
+│   ├── best_model.pkl     # Primary ANN MLP Champion Model
+│   └── training_summary.json # Performance stats & Model Comparison
 ├── archive/               # Historical development artifacts
-├── model.py               # Advanced Model Training Factory
-├── dataset.csv            # Synthetic training data
-└── predict.py             # CLI prediction tool
+├── model.py               # ML Training Factory (Pipeline & Scaling)
+├── dataset.csv            # Synthetic behavioral training data
+└── predict.py             # CLI stress-testing prediction tool
 ```
 
 ## ⚙️ Installation & Setup
